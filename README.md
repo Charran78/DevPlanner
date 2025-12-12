@@ -6,6 +6,10 @@
 ![Streamlit](https://img.shields.io/badge/Streamlit-1.22+-red.svg)
 ![License](https://img.shields.io/badge/License-MIT-green.svg)
 
+## 🎥 Preview
+
+![Preview]([https://i.picasion.com/pic93/313f0c8838c8e21b6fea84d356b7374f.gif])
+
 ## ✨ Características Principales
 
 - **🤖 Asistente de IA Integrado**: Genera automáticamente tareas y estimaciones de tiempo para tus proyectos
