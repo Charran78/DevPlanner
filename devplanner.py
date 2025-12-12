@@ -126,11 +126,11 @@ def get_db_connection():
     return sqlite3.connect('devplanner.db')
 
 # Funciones para proyectos
-def create_project(name, description):
+def create_project(name, description, status='planning'):
     conn = get_db_connection()
     c = conn.cursor()
-    c.execute('INSERT INTO projects (name, description) VALUES (?, ?)', 
-             (name, description))
+    c.execute('INSERT INTO projects (name, description, status) VALUES (?, ?, ?)', 
+             (name, description, status))
     project_id = c.lastrowid
     conn.commit()
     conn.close()
@@ -424,8 +424,9 @@ def main():
             
             if st.button("🎯 Crear Proyecto", use_container_width=True):
                 if project_name:
-                    project_id = create_project(project_name, project_description)
+                    project_id = create_project(project_name, project_description, project_status)
                     st.success(f"Proyecto '{project_name}' creado exitosamente!")
+                    st.rerun()
                 else:
                     st.error("Por favor, ingresa un nombre para el proyecto.")
         
@@ -463,7 +464,7 @@ def main():
                                 if st.button("Generar plan de tareas con IA", key=f"ai_btn_{project[0]}"):
                                     with st.spinner("Generando tareas con IA..."):
                                         ai_tasks = generate_tasks_with_ai(
-                                            project_description, 
+                                            project[2],  # Usar la descripción del proyecto actual
                                             ai_config[1], 
                                             ai_config[2],
                                             ai_config[3] if ai_config[3] else None
@@ -518,7 +519,7 @@ def main():
                         if tasks:
                             st.markdown("### Tareas del Proyecto")
                             for task in tasks:
-                                col1, col2, col3 = st.columns([3, 1, 1])
+                                col1, col2, col3, col4 = st.columns([3, 1, 1, 0.5])
                                 with col1:
                                     st.markdown(f"**{task[2]}**")
                                     st.markdown(f"Estimado: {task[3]} horas | Real: {task[4]} horas")
@@ -535,6 +536,15 @@ def main():
                                         conn.close()
                                         st.rerun()
                                 with col3:
+                                    actual_hours = st.number_input("Horas reales", min_value=0.0, value=float(task[4]), step=0.5, key=f"actual_{task[0]}")
+                                    if actual_hours != task[4]:
+                                        conn = get_db_connection()
+                                        c = conn.cursor()
+                                        c.execute('UPDATE tasks SET actual_hours = ? WHERE id = ?', (actual_hours, task[0]))
+                                        conn.commit()
+                                        conn.close()
+                                        st.rerun()
+                                with col4:
                                     if st.button("🗑️", key=f"delete_{task[0]}"):
                                         conn = get_db_connection()
                                         c = conn.cursor()
