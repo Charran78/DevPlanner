@@ -604,13 +604,6 @@ def main():
                 )
                 api_key = st.text_input("API Key de OpenAI", type="password", value=ai_config[3] if ai_config[3] else "", 
                                       help="Tu clave API de OpenAI. Se almacenará localmente de forma segura.")
-                
-                if api_key:
-                    if st.button("Probar conexión con OpenAI"):
-                        if test_openai_connection(api_key):
-                            st.success("✅ Conexión exitosa con OpenAI!")
-                        else:
-                            st.error("❌ No se pudo conectar con OpenAI. Verifica tu API key.")
             
             else:
                 st.markdown("### Configuración de Ollama (Local)")
@@ -620,18 +613,34 @@ def main():
                     index=["phi3", "llama2", "mistral", "mixtral", "codellama", "gemma", "llama3"].index(ai_config[2]) if ai_config[2] in ["phi3", "llama2", "mistral", "mixtral", "codellama", "gemma", "llama3"] else 0
                 )
                 api_key = None
-                
-                if st.button("Probar conexión con Ollama"):
-                    if test_ollama_connection():
-                        st.success("✅ Conexión exitosa con Ollama!")
-                    else:
-                        st.error("❌ No se pudo conectar con Ollama. Asegúrate de que esté instalado y ejecutándose.")
             
             st.markdown('</div>', unsafe_allow_html=True)
             
             if st.form_submit_button("💾 Guardar Configuración", use_container_width=True):
                 save_ai_config(ai_provider, ai_model, api_key)
                 st.success("Configuración de IA guardada exitosamente!")
+        
+        # Botones de prueba fuera del formulario
+        st.markdown("---")
+        st.markdown("### 🔌 Probar Conexión")
+        
+        current_config = get_ai_config()
+        if current_config:
+            if current_config[1] == "openai":
+                if current_config[3]:
+                    if st.button("🧪 Probar conexión con OpenAI"):
+                        if test_openai_connection(current_config[3]):
+                            st.success("✅ Conexión exitosa con OpenAI!")
+                        else:
+                            st.error("❌ No se pudo conectar con OpenAI. Verifica tu API key.")
+                else:
+                    st.warning("⚠️ Primero guarda tu API key de OpenAI para poder probar la conexión.")
+            else:  # ollama
+                if st.button("🧪 Probar conexión con Ollama"):
+                    if test_ollama_connection():
+                        st.success("✅ Conexión exitosa con Ollama!")
+                    else:
+                        st.error("❌ No se pudo conectar con Ollama. Asegúrate de que esté instalado y ejecutándose.")
         
         st.markdown("---")
         st.markdown("### Información de Configuración")
