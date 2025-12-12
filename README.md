@@ -8,7 +8,7 @@
 
 ## 🎥 Preview
 
-![Demo]([https://i.picasion.com/pic93/313f0c8838c8e21b6fea84d356b7374f.gif])
+![Demo](https://i.picasion.com/pic93/313f0c8838c8e21b6fea84d356b7374f.gif)
 
 ## ✨ Características Principales
 
